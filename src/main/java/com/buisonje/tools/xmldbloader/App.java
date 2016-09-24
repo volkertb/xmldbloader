@@ -3,14 +3,19 @@
  */
 package com.buisonje.tools.xmldbloader;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import com.wordpress.rterp.CdiContext;
+import com.google.common.base.Charsets;
 
 /**
  * Application entry point.
@@ -22,6 +27,8 @@ public class App {
 
     private static final String PROPERTIES_FILE_NAME = "xmldbloader.properties";
     private static final Properties APPLICATION_PROPERTIES = loadProperties(PROPERTIES_FILE_NAME);
+
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     private static Properties loadProperties(String propertiesFileName) {
         final Properties props = new Properties();
@@ -52,15 +59,58 @@ public class App {
      */
     public static void main(final String[] args) throws Exception {
 
+        printWelcomeMessage();
+
         final List<String> params = new ArrayList<String>();
         final List<String> inputFilePaths = new ArrayList<String>();
 
         separateArguments(args, params, inputFilePaths);
 
-        final CdiContext context = CdiContext.INSTANCE;
+        new XmlDataSetDBLoader().loadDataFiles(params, APPLICATION_PROPERTIES, inputFilePaths);
+    }
 
-        context.getBean(DataLoader.class).loadDataFiles(params, APPLICATION_PROPERTIES, inputFilePaths);
+    /**
+     * Platform-independent and encoding-neutral console output.
+     * TODO: Extract this into a separate reusable class.
+     * @param format see {@link PrintStream#printf(String, Object...)}
+     * @param args see {@link PrintStream#printf(String, Object...)}
+     * @see System#out
+     * @see PrintStream
+     * @see Console
+     */
+    private static PrintWriter printf(String format, Object ... args) {
 
+        PrintWriter writer;
+
+        Console console = System.console();
+        if (console != null) {
+            // With thanks to https://stackoverflow.com/a/4747502
+            writer = console.writer();
+        } else {
+            // Either we're running Git Bash or Cygterm under Windows, or we're on some kind of non-Windows system. Either way, the encoding would be UTF-8.
+
+            try {
+                // With thanks to https://stackoverflow.com/a/20387039
+                writer = new PrintWriter(
+                        new OutputStreamWriter(System.out, Charsets.UTF_8),
+                        true);
+            } catch (UnsupportedCharsetException e) {
+                throw new IllegalStateException("Seriously, what kind of system doesn't even support UTF-8???", e);
+            }
+        }
+
+        writer.printf(format, args);
+        return writer;
+    }
+
+    private static void printWelcomeMessage () {
+        printf(NEW_LINE)
+                .printf(
+                    "xmldbloader version %s, (C) 2016 Volkert de Buisonjé. For source code and license terms, see https://github.com/volkertb/xmldbloader",
+                    App.class.getPackage().getImplementationVersion()
+                )
+                .printf(NEW_LINE)
+                .printf(NEW_LINE);
     }
 
     /**

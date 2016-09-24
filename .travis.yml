@@ -6,3 +6,6 @@ jdk:
   - openjdk7
   - openjdk6
 
+after_script:
+- cd target
+- java -jar xmldbloader.jar chinook-dataset.xml

@@ -1,4 +1,4 @@
-# Third-party code I used in this project:
+# Third-party code that I used in this project
 
 * com.ibatis.common.jdbc.ScriptRunner
   * Author:   Clinton Begin (with modifications by GPSHansl and by me)
@@ -8,12 +8,23 @@
   * Author:   Nick Sayer
   * License:  unknown
   * Web site: http://www.kfu.com/~nsayer/Java/dyn-jdbc.html
-* com.wordpress.rterp.CdiContext
-  * Author:   Rob Terpilowski
-  * License:  unknown
-  * Web site: https://rterp.wordpress.com/2015/05/15/using-dependency-injection-in-a-java-se-application/
-  
-# My own code:
+* Chinook Database
+  * Author:   Luis Rocha
+  * License:  The MIT License (MIT), see https://chinookdatabase.codeplex.com/license
+  * Web site: https://chinookdatabase.codeplex.com/
+
+I would like to thank these people for sharing their code for others to use.
+
+# Code from Stack Overflow
+
+Here and there, I have applied code examples from Stack Overflow to this project. In such cases, I have added comments containing the shortened direct "Share" URLs that link to the published answers from which I have taken such code, both for reference and as a means of attribution to comply with the license terms of user-contributed content at Stack Overflow. The parts of the code that I have copied from such answers and examples at Stack Overflow (and other Stack Exchange sites) are licensed as follows:
+
+  * https://creativecommons.org/licenses/by-sa/3.0/
+  * https://blog.stackoverflow.com/2009/06/attribution-required/
+
+I would also like to thank the helpful people on Stack Overflow for their invaluable information, which has helped and educated me immensely over the years, not just in this project.
+
+# My own code
 
 Copyright 2016 Volkert de Buisonjé
 

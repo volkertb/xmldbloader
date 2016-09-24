@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.enterprise.inject.Default;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -41,7 +40,6 @@ import com.kfu.www.nsayer.DriverShim;
  *
  * @author Volkert de Buisonj&eacute;
  */
-@Default
 public class XmlDataSetDBLoader implements DataLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlDataSetDBLoader.class);

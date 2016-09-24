@@ -16,19 +16,20 @@
     <project.java.version>1.6</project.java.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-
     <!-- Dependency versions -->
+    <dependency.com.google.guava.guava.version>19.0</dependency.com.google.guava.guava.version>
     <dependency.commons-io.commons-io.version>2.5</dependency.commons-io.commons-io.version>
     <dependency.junit.junit.version>4.12</dependency.junit.junit.version>
     <dependency.org.dbunit.dbunit.version>2.5.3</dependency.org.dbunit.dbunit.version>
-    <dependency.org.jboss.weld.se.weld-se.version>2.2.11.Final</dependency.org.jboss.weld.se.weld-se.version>
     <dependency.org.reflections.reflections.version>0.9.10</dependency.org.reflections.reflections.version>
     <dependency.org.slf4j.slf4j-simple.version>1.7.21</dependency.org.slf4j.slf4j-simple.version>
 
     <!-- Plugin versions -->
     <plugin.org.apache.maven.plugins.maven-compiler-plugin.version>3.5.1</plugin.org.apache.maven.plugins.maven-compiler-plugin.version>
-    <plugin.org.codehaus.mojo.dbunit-maven-plugin.version>1.0-beta-3</plugin.org.codehaus.mojo.dbunit-maven-plugin.version>
     <plugin.org.apache.maven.plugins.maven-dependency-plugin.version>2.10</plugin.org.apache.maven.plugins.maven-dependency-plugin.version>
+    <plugin.org.apache.maven.plugins.maven-jar-plugin.version>3.0.2</plugin.org.apache.maven.plugins.maven-jar-plugin.version>
+    <plugin.org.apache.maven.plugins.maven-resources-plugin.version>3.0.1</plugin.org.apache.maven.plugins.maven-resources-plugin.version>
+    <plugin.org.apache.maven.plugins.maven-shade-plugin.version>2.4.3</plugin.org.apache.maven.plugins.maven-shade-plugin.version>
 
     <!-- Other artifact versions -->
     <artifact.org.xerial.sqlite-jdbc.version>3.8.11.2</artifact.org.xerial.sqlite-jdbc.version>
@@ -71,15 +72,15 @@
       </dependency>
 
       <dependency>
-        <groupId>org.jboss.weld.se</groupId>
-        <artifactId>weld-se</artifactId>
-        <version>${dependency.org.jboss.weld.se.weld-se.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${dependency.commons-io.commons-io.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${dependency.com.google.guava.guava.version}</version>
       </dependency>
 
       <!-- Test-scoped dependencies: -->
@@ -96,6 +97,7 @@
 
     <pluginManagement>
       <plugins>
+
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
@@ -110,6 +112,24 @@
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-dependency-plugin</artifactId>
               <version>${plugin.org.apache.maven.plugins.maven-dependency-plugin.version}</version>
+          </plugin>
+
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jar-plugin</artifactId>
+              <version>${plugin.org.apache.maven.plugins.maven-jar-plugin.version}</version>
+          </plugin>
+
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-resources-plugin</artifactId>
+              <version>${plugin.org.apache.maven.plugins.maven-resources-plugin.version}</version>
+          </plugin>
+
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-shade-plugin</artifactId>
+              <version>${plugin.org.apache.maven.plugins.maven-shade-plugin.version}</version>
           </plugin>
 
       </plugins>
@@ -152,6 +172,83 @@
             </executions>
         </plugin>
 
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>copy-resources</id>
+                    <!-- here the phase you need -->
+                    <phase>validate</phase>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${basedir}/target/</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>src/non-packaged-resources</directory>
+                                <includes>
+                                    <include>xmldbloader.properties</include>
+                                </includes>
+                                <filtering>true</filtering>
+                            </resource>
+                            <resource>
+                                <directory>src/non-packaged-resources</directory>
+                                <includes>
+                                    <include>chinook_empty.db</include>
+                                </includes>
+                                <filtering>false</filtering>
+                            </resource>
+                            <resource>
+                                <directory>src/test/resources</directory>
+                                <includes>
+                                    <include>chinook-dataset.xml</include>
+                                </includes>
+                                <filtering>true</filtering>
+                            </resource>
+                        </resources>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <!-- Allow the application version to be queried at run-time. ( With thanks to https://stackoverflow.com/a/2713013 ) -->
+                <archive>
+                    <manifest>
+                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                    </manifest>
+                </archive>
+                <!-- Prevent the version/snapshot number from being appended to the output file. ( With thanks to https://stackoverflow.com/a/14490656 ) -->
+                <finalName>${project.artifactId}</finalName>
+            </configuration>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>com.buisonje.tools.xmldbloader.App</mainClass>
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
     </plugins>
 
     <testResources>
@@ -180,12 +277,12 @@
             <artifactId>reflections</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.jboss.weld.se</groupId>
-            <artifactId>weld-se</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <!-- Test-scoped dependencies: -->
