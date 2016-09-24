@@ -1,0 +1,197 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.buisonje.tools</groupId>
+  <artifactId>xmldbloader</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>db-init-tool</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <!-- Project properties -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.java.version>1.6</project.java.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+
+    <!-- Dependency versions -->
+    <dependency.commons-io.commons-io.version>2.5</dependency.commons-io.commons-io.version>
+    <dependency.junit.junit.version>4.12</dependency.junit.junit.version>
+    <dependency.org.dbunit.dbunit.version>2.5.3</dependency.org.dbunit.dbunit.version>
+    <dependency.org.jboss.weld.se.weld-se.version>2.2.11.Final</dependency.org.jboss.weld.se.weld-se.version>
+    <dependency.org.reflections.reflections.version>0.9.10</dependency.org.reflections.reflections.version>
+    <dependency.org.slf4j.slf4j-simple.version>1.7.21</dependency.org.slf4j.slf4j-simple.version>
+
+    <!-- Plugin versions -->
+    <plugin.org.apache.maven.plugins.maven-compiler-plugin.version>3.5.1</plugin.org.apache.maven.plugins.maven-compiler-plugin.version>
+    <plugin.org.codehaus.mojo.dbunit-maven-plugin.version>1.0-beta-3</plugin.org.codehaus.mojo.dbunit-maven-plugin.version>
+    <plugin.org.apache.maven.plugins.maven-dependency-plugin.version>2.10</plugin.org.apache.maven.plugins.maven-dependency-plugin.version>
+
+    <!-- Other artifact versions -->
+    <artifact.org.xerial.sqlite-jdbc.version>3.8.11.2</artifact.org.xerial.sqlite-jdbc.version>
+
+    <!-- Resource filtering properties -->
+    <jdbc.jar.filename>sqlite-jdbc.jar</jdbc.jar.filename>
+    <jdbc.jar.path>${project.build.directory}${file.separator}${jdbc.jar.filename}</jdbc.jar.path>
+
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>org.dbunit</groupId>
+        <artifactId>dbunit</artifactId>
+        <version>${dependency.org.dbunit.dbunit.version}</version>
+        <exclusions>
+            <exclusion>
+                <artifactId>poi</artifactId>
+                <groupId>poi</groupId>
+            </exclusion>
+            <exclusion>
+                <artifactId>junit-addons</artifactId>
+                <groupId>junit-addons</groupId>
+            </exclusion>
+        </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${dependency.org.slf4j.slf4j-simple.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${dependency.org.reflections.reflections.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.weld.se</groupId>
+        <artifactId>weld-se</artifactId>
+        <version>${dependency.org.jboss.weld.se.weld-se.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${dependency.commons-io.commons-io.version}</version>
+      </dependency>
+
+      <!-- Test-scoped dependencies: -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${dependency.junit.junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+
+    <pluginManagement>
+      <plugins>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>${plugin.org.apache.maven.plugins.maven-compiler-plugin.version}</version>
+              <configuration>
+                  <source>${project.java.version}</source>
+                  <target>${project.java.version}</target>
+              </configuration>
+          </plugin>
+
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>${plugin.org.apache.maven.plugins.maven-dependency-plugin.version}</version>
+          </plugin>
+
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+        </plugin>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>copy</id>
+                    <!-- Must be *before* Maven's "test" phase. -->
+                    <phase>compile</phase>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>org.xerial</groupId>
+                                <artifactId>sqlite-jdbc</artifactId>
+                                <version>${artifact.org.xerial.sqlite-jdbc.version}</version>
+                                <type>jar</type>
+                                <overWrite>false</overWrite>
+                                <outputDirectory>${project.build.directory}</outputDirectory>
+                                <destFileName>${jdbc.jar.filename}</destFileName>
+                            </artifactItem>
+                        </artifactItems>
+                        <!--<outputDirectory>${project.build.directory}/wars</outputDirectory>-->
+                        <!--<overWriteReleases>false</overWriteReleases>-->
+                        <!--<overWriteSnapshots>true</overWriteSnapshots>-->
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+    </plugins>
+
+    <testResources>
+      <testResource>
+          <directory>src/test/resources</directory>
+          <filtering>true</filtering>
+          <includes>
+              <include>xmldbloader-test.properties</include>
+          </includes>
+      </testResource>
+    </testResources>
+
+  </build>
+
+    <dependencies>
+        <dependency>
+          <groupId>org.dbunit</groupId>
+          <artifactId>dbunit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld.se</groupId>
+            <artifactId>weld-se</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <!-- Test-scoped dependencies: -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+    </dependencies>
+</project>

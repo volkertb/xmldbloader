@@ -1,0 +1,5 @@
+allowEmptyFields = true
+jdbc.jarpath = /usr/local/lib/postgresql-9.4.1211.jre6.jar
+jdbc.url = postgresql://localhost/postgres
+jdbc.username = postgres
+jdbc.password = postgres
