@@ -9,10 +9,10 @@ This is a small command-line tool that can be used easily and quickly load XML D
 Once built (see the chapter below), you first need to place a file called xmldbloader.properties in the same directory as from which you are going to launch the tool. Example of a valid properties file, assuming a PostgreSQL database:
 
     allowEmptyFields = true
-	\# IMPORTANT: make sure the JAR file you specify contains a JDBC driver which is compatible with your Java version.
+    # IMPORTANT: make sure the JAR file you specify contains a JDBC driver which is compatible with your Java version.
     jdbc.jarpath = /usr/local/lib/postgresql-9.4.1211.jre6.jar
-    \# The prefix "jdbc:" is implicit and can be either included or omitted.
-	jdbc.url = jdbc:postgresql://localhost/postgres
+    # The prefix "jdbc:" is implicit and can be either included or omitted.
+    jdbc.url = jdbc:postgresql://localhost/postgres
     jdbc.username = postgres
     jdbc.password = postgres
 
