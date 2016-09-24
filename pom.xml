@@ -4,10 +4,10 @@
 
   <groupId>com.buisonje.tools</groupId>
   <artifactId>xmldbloader</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>jar</packaging>
 
-  <name>db-init-tool</name>
+  <name>${project.artifactId}</name>
   <url>http://maven.apache.org</url>
 
   <properties>
